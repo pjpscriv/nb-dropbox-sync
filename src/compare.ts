@@ -37,8 +37,8 @@ class DirectoryComparer {
   }
 
   public async compare(): Promise<void> {
-    console.log(`\nComparing: ${this.distDir}`);
-    console.log(`     with: ${this.prodDir}\n`);
+    console.log(`\nComparing: ${c.CYAN}${this.distDir}${c.RESET}`);
+    console.log(`     with: ${c.GREEN}${this.prodDir}${c.RESET}\n`);
 
     const res: Result = await compare(this.prodDir, this.distDir, COMPARE_OPTIONS);
 

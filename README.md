@@ -6,8 +6,7 @@ directory: pull, compile, compare, and push.
 - [Overview](#overview)
 - [Getting started](#getting-started)
   - [1. Install](#1-install)
-  - [2. Create `nb-sync.config.json`](#2-create-nb-syncconfigjson)
-  - [3. Create `nb-sync.mappings.json`](#3-create-nb-syncmappingsjson)
+  - [2. Run `nb-sync init`](#2-run-nb-sync-init)
 - [Commands](#commands)
   - [Pull](#pull)
   - ["Compile"](#compile)
@@ -48,13 +47,16 @@ npm install nb-dropbox-sync
 This makes the `nb-sync` command available (via `node_modules/.bin/`) for
 each of the commands below.
 
-### 2. Create `nb-sync.config.json`
-
-Copy the example and fill in your Dropbox folder path(s):
+### 2. Run `nb-sync init`
 
 ```bash
-cp node_modules/nb-dropbox-sync/nb-sync.config.example.json nb-sync.config.json
+npx nb-sync init
 ```
+
+This creates both config files in the current directory (leaving either alone if it already exists):
+
+- **`nb-sync.mappings.json`** - copied as-is from the example template. Adjust its rules to match this theme's file naming conventions - see [Mapping rules](#mapping-rules) below. Unlike `nb-sync.config.json`, this file should be **committed** — it's theme-specific but not machine-specific.
+- **`nb-sync.config.json`** - built interactively: you'll be prompted for the prod Dropbox folder path and publish link, whether to override the default `src`/`dist` directories, and whether to set up a `test` environment too. The result looks like:
 
 ```json
 {
@@ -73,21 +75,11 @@ cp node_modules/nb-dropbox-sync/nb-sync.config.example.json nb-sync.config.json
 **Fields:**
 
 - `dist` and `src` (not shown - see below) are environment-independent: there's one dist build and one src checkout regardless of which Dropbox you're pointed at.
-- `prod` is required. `test` is optional - add it only if this theme has a separate test Dropbox/site, then pass `--env=test` to any command to target it instead of `prod`.
+- `prod` is required. `test` is optional - only answer yes to the "test environment" prompt if this theme has a separate test Dropbox/site, then pass `--env=test` to any command to target it instead of `prod`.
 - `publish_link` is optional on both - if set, it's printed at the end of the `push` command as a reminder of where to publish the theme.
-- `src` is optional and defaults to `src/` inside the theme repo (where the actual theme files - `layout.html`, `scss/`, `imgs/`, etc. - live). Add `"src": "some/other/path"` only to override that default.
+- `src` is optional and defaults to `src/` inside the theme repo (where the actual theme files - `layout.html`, `scss/`, `imgs/`, etc. - live). Only override it if prompted and you need something else.
 
 `nb-sync.config.json` should be gitignored (it holds machine-local absolute paths).
-
-### 3. Create `nb-sync.mappings.json`
-
-Copy the example and adjust the rules to match your theme's file naming conventions:
-
-```bash
-cp node_modules/nb-dropbox-sync/nb-sync.mappings.example.json nb-sync.mappings.json
-```
-
-Unlike `nb-sync.config.json`, this file should be **committed** — it's theme-specific but not machine-specific. See [Mapping rules](#mapping-rules) below.
 
 ## Commands
 
