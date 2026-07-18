@@ -1,4 +1,4 @@
-# nb-dropbox-sync <!-- omit from toc -->
+# NationBuilder Dropbox Sync <!-- omit from toc -->
 
 Sync a NationBuilder theme's Dropbox folder with a git-based source
 directory: pull, compile, compare, and push.

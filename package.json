@@ -1,6 +1,6 @@
 {
   "name": "nb-dropbox-sync",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Sync a NationBuilder theme's Dropbox folder with a git-based source directory: pull, compile, compare, and push.",
   "bin": {
     "nb-sync": "dist/cli.js"
