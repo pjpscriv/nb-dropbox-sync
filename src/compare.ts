@@ -1,4 +1,5 @@
 import * as readline from 'readline';
+import { spawnSync } from 'child_process';
 import { diffLines } from 'diff';
 import { compare, fileCompareHandlers, Result } from 'dir-compare';
 import { readFileSync } from 'fs';
@@ -27,18 +28,30 @@ class DirectoryComparer {
   private readonly distDir: string;
   private readonly prodDir: string;
   private readonly showDiffs: boolean;
+  private readonly configOverride: string | undefined;
+  private readonly mappingsOverride: string | undefined;
 
-  constructor(config: Config, env: Env, showDiffs: boolean) {
+  constructor(
+    config: Config,
+    env: Env,
+    showDiffs: boolean,
+    configOverride: string | undefined,
+    mappingsOverride: string | undefined
+  ) {
     const { dist } = config.getProject();
     const { dropbox } = config.getEnv(env);
     this.distDir = dist;
     this.prodDir = dropbox;
     this.showDiffs = showDiffs;
+    this.configOverride = configOverride;
+    this.mappingsOverride = mappingsOverride;
   }
 
   public async compare(): Promise<void> {
     console.log(`\nComparing: ${c.CYAN}${this.distDir}${c.RESET}`);
     console.log(`     with: ${c.GREEN}${this.prodDir}${c.RESET}\n`);
+
+    this.runCompileStep();
 
     const res: Result = await compare(this.prodDir, this.distDir, COMPARE_OPTIONS);
 
@@ -69,6 +82,20 @@ class DirectoryComparer {
     } else {
       console.log(`${c.YELLOW}\n ⚠️ Some files differ or are missing. ⚠️\n${c.RESET}`);
     }
+  }
+
+  private runCompileStep(): void {
+    console.log('Compiling...');
+    const args = [join(__dirname, 'compile.js'), '--quiet', '--no-color'];
+    if (this.configOverride) args.push(`--config=${this.configOverride}`);
+    if (this.mappingsOverride) args.push(`--mappings=${this.mappingsOverride}`);
+    const compiled = spawnSync(process.execPath, args, { stdio: ['ignore', 'pipe', 'pipe'] });
+    if (compiled.status !== 0) {
+      process.stderr.write(compiled.stderr);
+      console.error('Compile step failed. Aborting.');
+      process.exit(1);
+    }
+    console.log('Compiling done.\n');
   }
 
   private printDiff(name1: string, name2: string): void {
@@ -107,12 +134,14 @@ async function main(): Promise<void> {
   // Get args
   const showDiffs = process.argv.includes('--showDiffs');
   const env = parseEnvFlag();
+  const configOverride = parseStringFlag('config');
+  const mappingsOverride = parseStringFlag('mappings');
 
   // Create config
-  const config = new Config(parseStringFlag('config'), parseStringFlag('mappings'));
+  const config = new Config(configOverride, mappingsOverride);
 
   // Create comparer
-  const comparer = new DirectoryComparer(config, env, showDiffs);
+  const comparer = new DirectoryComparer(config, env, showDiffs, configOverride, mappingsOverride);
 
   // Do the thing
   await comparer.compare();

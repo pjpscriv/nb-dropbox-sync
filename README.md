@@ -6,7 +6,7 @@ directory: pull, compile, compare, and push.
 - [Overview](#overview)
 - [Getting started](#getting-started)
   - [1. Install](#1-install)
-  - [2. Run `nb-sync init`](#2-run-nb-sync-init)
+  - [2. Initialise your configs](#2-initialise-your-configs)
 - [Commands](#commands)
   - [Pull](#pull)
   - ["Compile"](#compile)
@@ -47,7 +47,7 @@ npm install nb-dropbox-sync
 This makes the `nb-sync` command available (via `node_modules/.bin/`) for
 each of the commands below.
 
-### 2. Run `nb-sync init`
+### 2. Initialise your configs
 
 ```bash
 npx nb-sync init
@@ -97,6 +97,7 @@ npx nb-sync pull --env=test
 
 Copies files from the configured Dropbox path into the `src/` directory.
 
+- **Pulls latest from git first** - runs `git pull` in the `src/` directory before copying anything (skipped if `src/` isn't a git repo yet).
 - **Cleans the destination** - everything in `src/` is removed before copying (except a keep list: `.git`, `.gitattributes`, `.gitignore`, `README.md`, `bot-deploy.ps1`, `node_modules`, `package.json`, `package-lock.json`, `nb-sync.config.json`, `nb-sync.mappings.json`, `sync.log`)
 - **Copies files using mapping rules** - each file's path (relative to the Dropbox source folder) is matched against the rules in `nb-sync.mappings.json` (in order) to determine which subfolder it lands in. Unmatched files are copied flat to the root.
 - **Resolves SCSS `@import` paths** - for `.scss` files that contain `@import` statements, each import is rewritten from a flat name (e.g. `@import 'mixins_colors'`) to the correct relative path based on where both files will land (e.g. `@import '../scss/mixins/mixins_colors'`). _(This is done so Ctrl + clicking still works in VS Code)_.
@@ -129,6 +130,7 @@ npx nb-sync compare --env=test
 
 Compares the compiled `dist` directory against the live Dropbox folder.
 
+- **Compiles first** - automatically runs the compile step before comparing, so `dist` is always up to date
 - **✅** - file is identical in both locations
 - **⚠️** - file exists in both but content differs
 - **❌** - file exists in one location only

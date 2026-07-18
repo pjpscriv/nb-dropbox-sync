@@ -66,6 +66,9 @@ class DropboxPuller {
   }
 
   public pull(): void {
+    // Pull latest from git before touching anything
+    this.gitPull();
+
     // Clean destination before copying
     this.cleanSrcDir();
 
@@ -99,6 +102,22 @@ class DropboxPuller {
     this.stripLineEndingChanges();
 
     this.log(`Copied ${files.length} files.`, '', '', true)
+  }
+
+  private gitPull(): void {
+    if (!fs.existsSync(path.join(this.srcDir, '.git'))) {
+      this.log('Skipping git pull - src dir is not a git repo yet.', c.YELLOW);
+      return;
+    }
+
+    this.log('Pulling latest from git...', '', '', true);
+    const result = spawnSync('git', ['pull'], { cwd: this.srcDir, encoding: 'utf8' });
+    if (result.status !== 0) {
+      process.stderr.write(result.stderr);
+      this.log('git pull failed. Aborting.', c.RED, '', true);
+      process.exit(1);
+    }
+    if (result.stdout.trim()) this.log(result.stdout.trim());
   }
 
   private stripLineEndingChanges(): void {
