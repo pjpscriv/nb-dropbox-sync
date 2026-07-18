@@ -1,0 +1,33 @@
+[
+  { "match": "^\\.vscode/settings\\.json$",         "dest": ".vscode" },
+
+  { "match": "\\.original\\.",                      "dest": "_refs" },
+  
+  { "match": "^layout\\.html$",                     "dest": "" },
+  { "match": "^theme\\.scss$",                      "dest": "" },
+
+  { "match": "\\.(png|jpg|jpeg|svg)$",              "dest": "imgs" },
+  { "match": "\\.(eot|ttf|woff)$",                  "dest": "fonts" },
+
+  { "match": "^_z_pages_show_.*\\.html$",           "dest": "custom/templates/pages_show" },
+
+  { "match": "^_z_section_.*\\.html$",              "dest": "custom/templates/section" },
+  { "match": "^_z_widget_.*\\.html$",               "dest": "custom/templates/widget" },
+  { "match": "^_z_.*\\.html$",                      "dest": "custom/templates" },
+  { "match": "^_z_.*\\.js$",                        "dest": "custom/js" },
+  { "match": "^_z_.*\\.scss$",                      "dest": "custom/scss" },
+
+  { "match": "^_?bootstrap.*\\.scss$",              "dest": "scss/bootstrap" },
+  { "match": "^_(?!z_)mixins_.*\\.scss$",           "dest": "scss/mixins" },
+  { "match": "^_(?!z_)utilities_.*\\.scss$",        "dest": "scss/utilities" },
+  { "match": "^_(?!z_).*\\.scss$",                  "dest": "scss" },
+
+  { "match": "^[^_].*\\.js$",                       "dest": "js" },
+
+  { "match": "^pages_show_.*\\.html$",              "dest": "default/pages_show" },
+  { "match": "^users_.*\\.html$",                   "dest": "default/users" },
+  { "match": "^[^_].*\\.html$",                     "dest": "default" },
+
+  { "match": "^_(?!z_).*\\.html$",                  "dest": "components" },
+  { "match": "^_(?!z_).*\\.js$",                    "dest": "components/js" }
+]

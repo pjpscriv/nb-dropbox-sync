@@ -1,0 +1,11 @@
+{
+  "dist": "/absolute/path/to/dist-dir",
+  "prod": {
+    "dropbox": "/absolute/path/to/dropbox/folder",
+    "publish_link": "https://<NATION_SLUG>.nationbuilder.com/admin/sites/<SITE_ID>/themes/<THEME_ID>/attachments"
+  },
+  "test": {
+    "dropbox": "/absolute/path/to/test-dropbox/folder",
+    "publish_link": "https://<NATION_SLUG>.nationbuilder.com/admin/sites/<TEST_SITE_ID>/themes/<TEST_THEME_ID>/attachments"
+  }
+}

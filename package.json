@@ -1,0 +1,46 @@
+{
+  "name": "nb-dropbox-sync",
+  "version": "0.1.0",
+  "description": "Sync a NationBuilder theme's Dropbox folder with a git-based source directory: pull, compile, compare, and push.",
+  "bin": {
+    "nb-sync": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "nb-sync.config.example.json",
+    "nb-sync.mappings.example.json",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pjpscriv/nb-dropbox-sync.git"
+  },
+  "homepage": "https://github.com/pjpscriv/nb-dropbox-sync#readme",
+  "bugs": {
+    "url": "https://github.com/pjpscriv/nb-dropbox-sync/issues"
+  },
+  "keywords": [
+    "nationbuilder",
+    "dropbox",
+    "sync",
+    "theme"
+  ],
+  "author": "Peter Scriven",
+  "license": "MIT",
+  "dependencies": {
+    "diff": "^5.2.0",
+    "dir-compare": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/diff": "^7.0.2",
+    "@types/node": "^25.5.0",
+    "typescript": "^5.0.0"
+  }
+}

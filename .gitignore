@@ -1,0 +1,14 @@
+# Build output
+dist/
+
+# Node modules
+node_modules/
+
+# Local config, if testing this repo against a real theme directly
+# (use nb-sync.config.example.json as a template)
+nb-sync.config.json
+sync.log
+
+# Windows Task Scheduler helper scripts, if any get added locally
+*.ps1
+*.vbs
