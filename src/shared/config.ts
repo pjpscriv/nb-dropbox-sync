@@ -1,10 +1,11 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { ProjectConfig, MappingRule, EnvConfig, Env } from './types';
+import { ProjectConfig, MappingRule, EnvConfig, Env, GitUser } from './types';
 
 export const DEFAULT_CONFIG_FILENAME = 'nb-sync.config.json';
 export const DEFAULT_MAPPINGS_FILENAME = 'nb-sync.mappings.json';
 export const DEFAULT_SRC_DIRNAME = 'src';
+export const DEFAULT_GIT_USER: GitUser = { name: 'NationBuilder Dropbox Sync' };
 
 
 export class Config {
@@ -84,5 +85,9 @@ export class Config {
 
   public getMappings(): MappingRule[] {
     return this.mappings;
+  }
+
+  public getGitUser(): GitUser {
+    return this.data.gitUser ?? DEFAULT_GIT_USER;
   }
 }

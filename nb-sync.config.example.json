@@ -7,5 +7,9 @@
   "test": {
     "dropbox": "/absolute/path/to/test-dropbox/folder",
     "publish_link": "https://<NATION_SLUG>.nationbuilder.com/admin/sites/<TEST_SITE_ID>/themes/<TEST_THEME_ID>/attachments"
+  },
+  "gitUser": {
+    "name": "your-org-bot",
+    "email": "your-org-bot@users.noreply.github.com"
   }
 }

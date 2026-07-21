@@ -9,6 +9,7 @@ export interface ProjectConfig {
   src?: string;
   prod: EnvConfig;
   test?: EnvConfig;
+  gitUser?: GitUser;
 }
 
 export type Env = 'prod' | 'test';
@@ -25,7 +26,7 @@ export interface LogOptions {
 
 export type GitUser = {
   name: string;
-  email: string;
+  email?: string;
 }
 
 export type CommitDetails = {

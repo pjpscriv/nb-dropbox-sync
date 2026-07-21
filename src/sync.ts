@@ -99,8 +99,13 @@ class DropboxSyncer {
     const timestamp = this.getNztTimestamp();
     const commitMsg = `${this.commitDetails.msgPrefix} ${timestamp}`;
     const commitDesc = this.commitDetails.description ? ['-m', this.commitDetails.description] : [];
-    this.run('git', ['-c', `user.name=${user.name}`, '-c', `user.email=${user.email}`,
-                      'commit', '-m', commitMsg, ...commitDesc], this.gitDir, 'git commit');
+    
+    const userArgs = ['-c', `user.name=${user.name}`];
+    if (user.email) {
+      userArgs.push('-c', `user.email=${user.email}`);
+    }
+    
+    this.run('git', [...userArgs, 'commit', '-m', commitMsg, ...commitDesc], this.gitDir, 'git commit');
     this.run('git', ['push'], this.gitDir, 'git push');
     this.run('git', ['status'], this.gitDir, 'git status');
     this.log('Pushing changes complete.');
@@ -169,10 +174,7 @@ function main(): void {
   const commitDetails: CommitDetails = {
     msgPrefix: commitMsg,
     description: commitDesc,
-    user: {
-      name: 'greentech-robot',
-      email: '134040358+greentech-robot@users.noreply.github.com'
-    }
+    user: config.getGitUser()
   };
 
   // Create syncer

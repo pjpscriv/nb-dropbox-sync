@@ -78,6 +78,7 @@ This creates both config files in the current directory (leaving either alone if
 - `prod` is required. `test` is optional - only answer yes to the "test environment" prompt if this theme has a separate test Dropbox/site, then pass `--env=test` to any command to target it instead of `prod`.
 - `publish_link` is optional on both - if set, it's printed at the end of the `push` command as a reminder of where to publish the theme.
 - `src` is optional and defaults to `src/` inside the theme repo (where the actual theme files - `layout.html`, `scss/`, `imgs/`, etc. - live). Only override it if prompted and you need something else.
+- `gitUser` is optional (not prompted for by `init`) and only used by the `sync` command's git commits - `{ "name": "...", "email": "..." }` (`email` may be omitted). Defaults to `{ "name": "NationBuilder Dropbox Sync" }` with no email if not set.
 
 `nb-sync.config.json` should be gitignored (it holds machine-local absolute paths).
 
