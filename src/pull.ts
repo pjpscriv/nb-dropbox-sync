@@ -105,8 +105,9 @@ class DropboxPuller {
   }
 
   private gitPull(): void {
-    if (!fs.existsSync(path.join(this.srcDir, '.git'))) {
-      this.log('Skipping git pull - src dir is not a git repo yet.', c.YELLOW);
+    const check = spawnSync('git', ['rev-parse', '--is-inside-work-tree'], { cwd: this.srcDir, encoding: 'utf8' });
+    if (check.status !== 0 || check.stdout.trim() !== 'true') {
+      this.log('Skipping git pull - src dir is not in a git repo.', c.YELLOW);
       return;
     }
 
