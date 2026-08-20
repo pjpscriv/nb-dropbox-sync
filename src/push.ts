@@ -120,10 +120,9 @@ class DropboxPusher {
       this.log(`\nPublish at: ${this.publishLink}/page_templates`, c.CYAN, '', true);
       this.log(  `        or: ${this.publishLink}`, c.CYAN, '', true);
 
-      // Attachments are paginated at ATTACHMENTS_PAGE_SIZE items per page. If there are
-      // changes and more files than fit on one page, later pages may hold changed files too.
+      // Changed files can appear on later pages
       const totalPages = Math.ceil(distFiles.length / ATTACHMENTS_PAGE_SIZE);
-      if (pushed > 0 && totalPages > 1) {
+      if (totalPages > 1) {
         for (let page = 2; page <= totalPages; page++) {
           this.log(`        or: ${this.publishLink}?page=${page}`, c.CYAN, '', true);
         }
