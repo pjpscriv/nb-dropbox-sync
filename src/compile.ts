@@ -11,10 +11,10 @@ const ALLOWED_EXTENSIONS = new Set([
   '.html',
   '.scss',
   '.js',
-  '.png', '.jpg', '.jpeg', '.svg',
+  '.png', '.jpg', '.jpeg', '.svg', '.gif', '.bmp', '.webp', '.ico',
   '.css', '.map',
   '.json',
-  '.eot', '.ttf', '.woff',
+  '.eot', '.ttf', '.otf', '.woff', '.woff2', '.fnt',
 ]);
 
 

@@ -13,7 +13,7 @@ directory: pull, compile, compare, and push.
   - [Compare](#compare)
   - [Push](#push)
   - [Syncing + Task Scheduling](#syncing--task-scheduling)
-- [Flags common to every command](#flags-common-to-every-command)
+- [Common flags](#common-flags)
 - [Mapping rules](#mapping-rules)
 
 ## Overview
@@ -170,12 +170,25 @@ npx nb-sync task remove
 own git repo (checks it's on `main` and up to date first, then pulls from
 Dropbox into `src/`, and commits + pushes if anything changed).
 
+- `--commitMsg=<msg>` - prefix for the auto-commit message (default: `Dropbox auto-sync`); a timestamp is appended automatically
+- `--secondaryCommitMsg=<msg>` - optional extended commit description
+- `--runAtNzHours=<hours>` - restrict which hours the sync actually does work (see below)
+
 `task` registers/checks/removes a Windows Task Scheduler entry that runs
 `sync` on an hourly schedule. The task name and working directory are
 both derived automatically from the folder `task register` is run in — no
 arguments needed.
 
-## Flags common to every command
+**Restricting sync to specific hours:** the scheduled task itself always
+fires every hour on the hour — Task Scheduler isn't given a restricted
+schedule. Instead, pass `--runAtNzHours=<comma-separated hours>` (e.g.
+`--runAtNzHours=9,17`) to `sync` or `task register` (it's baked into the
+task's command line at registration time). On each hourly firing, `sync`
+checks the current hour in New Zealand time (`Pacific/Auckland`) and, if
+it isn't in the list, logs a skip and exits immediately without pulling,
+committing, or pushing anything. Omit the flag to run on every firing.
+
+## Common flags
 
 | Flag | Applies to | Description |
 |---|---|---|

@@ -7,7 +7,7 @@
   { "match": "^theme\\.scss$",                      "dest": "" },
 
   { "match": "\\.(png|jpg|jpeg|svg)$",              "dest": "imgs" },
-  { "match": "\\.(eot|ttf|woff)$",                  "dest": "fonts" },
+  { "match": "\\.(eot|ttf|otf|woff|woff2)$",        "dest": "fonts" },
 
   { "match": "^_z_pages_show_.*\\.html$",           "dest": "custom/templates/pages_show" },
 
