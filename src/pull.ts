@@ -1,11 +1,11 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import * as readline from 'readline';
-import { spawnSync } from 'child_process';
 import { Config } from './shared/config';
 import { LogOptions, MappingRule, Env } from './shared/types';
 import { parseLogOptions, parseStringFlag, parseEnvFlag } from './shared/args';
 import { Color as c } from './shared/colors';
+import { git, inGitRepo, hasUpstream } from './shared/git';
 
 const CLEAN_EXCLUDED = new Set([
   '.git',
@@ -105,16 +105,21 @@ class DropboxPuller {
   }
 
   private gitPull(): void {
-    const check = spawnSync('git', ['rev-parse', '--is-inside-work-tree'], { cwd: this.srcDir, encoding: 'utf8' });
-    if (check.status !== 0 || check.stdout.trim() !== 'true') {
-      this.log('Skipping git pull - src dir is not in a git repo.', c.YELLOW);
+    if (!inGitRepo(this.srcDir)) {
+      this.log('Skipping git pull - git unavailable or src dir is not in a git repo.', c.YELLOW);
+      return;
+    }
+
+    // No remote / no upstream branch means there is nothing to pull from
+    if (!hasUpstream(this.srcDir)) {
+      this.log('Skipping git pull - no remote/upstream branch configured.', c.YELLOW);
       return;
     }
 
     this.log('Pulling latest from git...', '', '', true);
-    const result = spawnSync('git', ['pull'], { cwd: this.srcDir, encoding: 'utf8' });
+    const result = git(this.srcDir, ['pull']);
     if (result.status !== 0) {
-      process.stderr.write(result.stderr);
+      process.stderr.write(result.stderr ?? '');
       this.log('git pull failed. Aborting.', c.RED, '', true);
       process.exit(1);
     }
@@ -122,9 +127,10 @@ class DropboxPuller {
   }
 
   private stripLineEndingChanges(): void {
+    if (!inGitRepo(this.srcDir)) return;
     this.log('\nStripping line-ending-only changes...\n', '', '', true);
-    spawnSync('git', ['add', '.'], { cwd: this.srcDir, encoding: 'utf8' });
-    spawnSync('git', ['restore', '--staged', '.'], { cwd: this.srcDir, encoding: 'utf8' });
+    git(this.srcDir, ['add', '.']);
+    git(this.srcDir, ['restore', '--staged', '.']);
   }
 
   private cleanSrcDir(): void {

@@ -4,6 +4,7 @@ import { spawnSync } from 'child_process';
 import { Config } from './shared/config';
 import { parseStringFlag, parseIntListFlag, parseEnvFlag } from './shared/args';
 import { GitUser, CommitDetails, Env } from './shared/types';
+import { gitProblem } from './shared/git';
 
 
 class DropboxSyncer {
@@ -44,6 +45,13 @@ class DropboxSyncer {
     this.log('');
     this.log('');
     this.log('=== sync started ===');
+
+    // Sync commits and pushes, so git + a remote are required
+    const problem = gitProblem(this.gitDir);
+    if (problem) {
+      this.log(`ERROR: nb-sync requires a git repo with a remote: ${problem} Aborting.`);
+      process.exit(1);
+    }
 
     // Confirm git repo is on main + up to date
     this.checkGitIsOnMainBranch();
