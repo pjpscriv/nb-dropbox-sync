@@ -1,12 +1,16 @@
 {
   "dist": "/absolute/path/to/dist-dir",
   "prod": {
-    "dropbox": "/absolute/path/to/dropbox/folder",
-    "publish_link": "https://<NATION_SLUG>.nationbuilder.com/admin/sites/<SITE_ID>/themes/<THEME_ID>/attachments"
+    "dropbox": "/absolute/path/to/dropbox/theme-folder",
+    "publish_link": "https://<NATION_SLUG>.nationbuilder.com/admin/sites/<SITE_ID>/themes/<THEME_ID>/attachments",
+    "site_dropbox": "/absolute/path/to/dropbox/site-folder",
+    "site_domain": "www.example.org"
   },
   "test": {
-    "dropbox": "/absolute/path/to/test-dropbox/folder",
-    "publish_link": "https://<NATION_SLUG>.nationbuilder.com/admin/sites/<TEST_SITE_ID>/themes/<TEST_THEME_ID>/attachments"
+    "dropbox": "/absolute/path/to/test-dropbox/theme-folder",
+    "publish_link": "https://<NATION_SLUG>.nationbuilder.com/admin/sites/<TEST_SITE_ID>/themes/<TEST_THEME_ID>/attachments",
+    "site_dropbox": "/absolute/path/to/test-dropbox/site-folder",
+    "site_domain": "test.example.org"
   },
   "gitUser": {
     "name": "your-org-bot",

@@ -2,11 +2,14 @@
 export interface EnvConfig {
   dropbox: string;
   publish_link?: string;
+  site_dropbox?: string;
+  site_domain?: string;
 }
 
 export interface ProjectConfig {
   dist: string;
   src?: string;
+  site?: string;
   prod: EnvConfig;
   test?: EnvConfig;
   gitUser?: GitUser;

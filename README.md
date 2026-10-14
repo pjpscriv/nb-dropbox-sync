@@ -12,6 +12,7 @@ directory: pull, compile, compare, and push.
   - ["Compile"](#compile)
   - [Compare](#compare)
   - [Push](#push)
+  - [Pull-site / Push-site](#pull-site--push-site)
   - [Syncing + Task Scheduling](#syncing--task-scheduling)
 - [Common flags](#common-flags)
 - [Mapping rules](#mapping-rules)
@@ -78,6 +79,7 @@ This creates both config files in the current directory (leaving either alone if
 - `prod` is required. `test` is optional - only answer yes to the "test environment" prompt if this theme has a separate test Dropbox/site, then pass `--env=test` to any command to target it instead of `prod`.
 - `publish_link` is optional on both - if set, it's printed at the end of the `push` command as a reminder of where to publish the theme.
 - `src` is optional and defaults to `src/` inside the theme repo (where the actual theme files - `layout.html`, `scss/`, `imgs/`, etc. - live). Only override it if prompted and you need something else.
+- `site_dropbox`, `site_domain` (both per environment) and `site` (top level) are all optional and only used by [`pull-site` / `push-site`](#pull-site--push-site). `site_dropbox` must be a separate folder from `dropbox` (neither may contain the other), and `site` must be separate from `src`.
 - `gitUser` is optional (not prompted for by `init`) and only used by the `sync` command's git commits - `{ "name": "...", "email": "..." }` (`email` may be omitted). Defaults to `{ "name": "NationBuilder Dropbox Sync" }` with no email if not set.
 
 `nb-sync.config.json` should be gitignored (it holds machine-local absolute paths).
@@ -156,6 +158,24 @@ Copies changed files from the `dist` directory back to the Dropbox folder, with 
 - **Shows publish link** - if `publish_link` is set for the active environment in `nb-sync.config.json`, prints the URL after the summary as a reminder of where to publish the theme
 
 **Flags:** `--force`, `--quiet` / `-q`, `--no-color` / `--plain`, `--env=`, `--config=`, `--mappings=`
+
+### Pull-site / Push-site
+
+```bash
+npx nb-sync pull-site
+npx nb-sync push-site [--force]
+```
+
+NationBuilder sites can have page-specific templates that override a page by name. These live in their own Dropbox folder, separate from the theme.
+
+**This is optional.** If your site has no page-specific templates, you can leave `site_dropbox`, `site_domain` out of your `nb-sync.config.json` without issue.
+
+- Per-environment config: `site_dropbox` (that folder) and `site_domain` (e.g. `www.example.org`, used for printed URLs).
+- Optional top-level `site` sets the local directory (default `site/`).
+- `pull-site` copies the Dropbox folder into the local site dir (no cleaning, no git).
+- `push-site` diffs and confirms per file like `push`, then lists the modified pages as `https://<site_domain>/<file name without .html>`.
+
+These are not part of `sync`.
 
 ### Syncing + Task Scheduling
 

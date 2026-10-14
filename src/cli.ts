@@ -2,7 +2,7 @@
 import * as path from 'path';
 import { spawnSync } from 'child_process';
 
-const COMMANDS = new Set(['init', 'pull', 'push', 'compile', 'compare', 'sync', 'task']);
+const COMMANDS = new Set(['init', 'pull', 'push', 'pull-site', 'push-site', 'compile', 'compare', 'sync', 'task']);
 
 function main(): void {
   const [subcommand, ...rest] = process.argv.slice(2);
