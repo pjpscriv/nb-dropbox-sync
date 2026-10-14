@@ -1,28 +1,15 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import * as readline from 'readline';
-import { diffLines } from 'diff';
 import { Config } from './shared/config';
 import { LogOptions } from './shared/types';
 import { parseForceFlag, parseLogOptions, parseStringFlag, parseEnvFlag } from './shared/args';
 import { Color as c } from './shared/colors';
 import { getAllFiles } from './shared/files';
-
-const readNormalized = (f: string) => fs.readFileSync(f, 'utf8').replace(/\r\n/g, '\n');
+import { showDiff, filesAreTheSame, isBinary } from './shared/diff';
 
 function log(opts: LogOptions, msg: string, ansiCode: string = ''): void {
   console.log(opts.color && ansiCode ? `${ansiCode}${msg}${c.RESET}` : msg);
-}
-
-function showDiff(opts: LogOptions, oldFile: string, newFile: string): void {
-  for (const part of diffLines(readNormalized(oldFile), readNormalized(newFile))) {
-    if (!part.added && !part.removed) continue;
-    const sign = part.added ? '+' : '-';
-    const color = part.added ? c.GREEN : c.RED;
-    const lines = part.value.split('\n');
-    if (lines[lines.length - 1] === '') lines.pop();
-    for (const line of lines) log(opts, `${sign}${line}`, color);
-  }
 }
 
 function confirm(message: string): Promise<boolean> {
@@ -58,10 +45,12 @@ async function main(): Promise<void> {
     const rel = path.relative(siteDir, file).replace(/\\/g, '/');
     const dest = path.join(dropbox, rel);
     const isNew = !fs.existsSync(dest);
-    if (!isNew && readNormalized(file) === readNormalized(dest)) continue;
+    if (!isNew && filesAreTheSame(file, dest)) continue;
 
     log(opts, `\n${rel} (${isNew ? 'new file' : 'modified'})`, c.CYAN);
-    if (!isNew) showDiff(opts, dest, file);
+    if (!isNew && !isBinary(file)) {
+      showDiff(dest, file, rel, opts.color);
+    }
 
     if (force || await confirm('Push this change? [y/N] ')) {
       fs.mkdirSync(path.dirname(dest), { recursive: true });

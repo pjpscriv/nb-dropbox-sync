@@ -2,18 +2,11 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as readline from 'readline';
 import { spawnSync } from 'child_process';
-import { diffLines } from 'diff';
 import { Config } from './shared/config';
 import { LogOptions, Env } from './shared/types';
 import { parseForceFlag, parseLogOptions, parseStringFlag, parseEnvFlag } from './shared/args';
 import { Color as c } from './shared/colors';
-
-const BINARY_EXTENSIONS = new Set([
-  // Images
-  '.png', '.jpg', '.jpeg', '.gif', '.bmp', '.webp', '.ico',
-  // Fonts
-  '.ttf', '.otf', '.woff', '.woff2', '.eot', '.fnt',
-]);
+import { showDiff, filesAreTheSame, isBinary } from './shared/diff';
 
 // NationBuilder's attachments admin page lists this many items per page.
 const ATTACHMENTS_PAGE_SIZE = 500;
@@ -73,15 +66,15 @@ class DropboxPusher {
 
       // If files are identical → skip
       const isNew = !fs.existsSync(dropboxFile);
-      if (!isNew && this.filesAreTheSame(distFile, dropboxFile)) {
+      if (!isNew && filesAreTheSame(distFile, dropboxFile)) {
         continue;
       }
 
       // Log proposed change
       const statusLabel = isNew ? 'new file' : 'modified';
       this.log(`\n${relPath} (${statusLabel})`, c.CYAN, '', true);
-      if (!isNew && !BINARY_EXTENSIONS.has(path.extname(distFile).toLowerCase())) {
-        this.showDiff(dropboxFile, distFile, relPath);
+      if (!isNew && !isBinary(distFile)) {
+        showDiff(dropboxFile, distFile, relPath, this.logOpts.color);
       }
 
       // Get confirmation from user (optional)
@@ -157,44 +150,6 @@ class DropboxPusher {
     return results;
   }
 
-  private filesAreTheSame(a: string, b: string): boolean {
-    const ext = path.extname(a).toLowerCase();
-    if (BINARY_EXTENSIONS.has(ext)) {
-      const statA = fs.statSync(a);
-      const statB = fs.statSync(b);
-      if (statA.size !== statB.size) return false;
-      return fs.readFileSync(a).equals(fs.readFileSync(b));
-    }
-    return this.readNormalized(a) === this.readNormalized(b);
-  }
-
-  private showDiff(oldFile: string, newFile: string, relPath: string): void {
-    const oldContent = this.readNormalized(oldFile);
-    const newContent = this.readNormalized(newFile);
-    let oldLineNum = 1;
-    let newLineNum = 1;
-    for (const part of diffLines(oldContent, newContent)) {
-      const lines = part.value.split('\n');
-      if (lines[lines.length - 1] === '') lines.pop();
-      if (!part.added && !part.removed) {
-        oldLineNum += lines.length;
-        newLineNum += lines.length;
-        continue;
-      }
-      const sign = part.added ? '+' : '-';
-      const color = part.added ? c.GREEN : c.RED;
-      for (const line of lines) {
-        const lineNum = part.added ? newLineNum++ : oldLineNum++;
-        const gutter = `${String(lineNum).padStart(5)} `;
-        const text = `${sign}${line}`;
-        process.stdout.write(this.logOpts.color
-          ? `\x1b[2m${color}${gutter}${c.RESET}${color}${text}${c.RESET}\n`
-          : `${gutter}${text}\n`);
-      }
-    }
-    this.log(`^ ${relPath}`, c.CYAN, '', true);
-  }
-
   private async confirm(message: string): Promise<boolean> {
     const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
     return new Promise(resolve => {
@@ -217,8 +172,6 @@ class DropboxPusher {
       fs.mkdirSync(dir, { recursive: true });
     }
   }
-
-  private readNormalized = (f: string) => fs.readFileSync(f, 'utf8').replace(/\r\n/g, '\n');
 
   private log(msg: string, ansiCode: string = '', prefix: string = '', override: boolean = false): void {
     if (this.logOpts.quiet && !override) return;
