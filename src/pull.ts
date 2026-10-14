@@ -6,21 +6,7 @@ import { LogOptions, MappingRule, Env } from './shared/types';
 import { parseLogOptions, parseStringFlag, parseEnvFlag } from './shared/args';
 import { Color as c } from './shared/colors';
 import { git, inGitRepo, hasUpstream } from './shared/git';
-
-const CLEAN_EXCLUDED = new Set([
-  '.git',
-  '.gitattributes',
-  '.gitignore',
-  'README.md',
-  'bot-deploy.ps1',
-
-  'node_modules',
-  'package.json',
-  'package-lock.json',
-  'nb-sync.config.json',
-  'nb-sync.mappings.json',
-  'sync.log',
-]);
+import { CLEAN_EXCLUDED } from './shared/files';
 
 
 class DropboxPuller {

@@ -172,7 +172,8 @@ NationBuilder sites can have page-specific templates that override a page by nam
 
 - Per-environment config: `site_dropbox` (that folder) and `site_domain` (e.g. `www.example.org`, used for printed URLs).
 - Optional top-level `site` sets the local directory (default `site/`).
-- `pull-site` copies the Dropbox folder into the local site dir (no cleaning, no git).
+- `site` must be a subfolder of the project (it can't be the root), and separate from `src`.
+- `pull-site` cleans the local site dir, then copies the Dropbox folder into it. No git.
 - `push-site` diffs and confirms per file like `push`, then lists the modified pages as `https://<site_domain>/<file name without .html>`.
 
 These are not part of `sync`.

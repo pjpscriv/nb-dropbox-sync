@@ -118,6 +118,11 @@ export class Config {
   // pull cleans src, and compile flattens everything under it into dist, so a nested
   // site dir would be wiped / pushed as theme files (and vice versa for pull-site).
   private assertDestDirsSeparate(src: string, site: string): void {
+    // pull-site cleans the site dir, so it can't be the project root (or a parent of it)
+    if (isInside(process.cwd(), site)) {
+      console.error(`Error: in ${this.configPath}, "site" (${site}) must be a subfolder of the project root, not the root itself.`);
+      process.exit(1);
+    }
     if (isInside(site, src) || isInside(src, site)) {
       console.error(`Error: in ${this.configPath}, "src" (${src}) and "site" (${site}) must be separate folders (neither may contain, or equal, the other).`);
       process.exit(1);
